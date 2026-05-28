@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 };
 
 import { AuthProvider } from "@/providers/AuthProvider";
+import { QueryProvider } from "@/providers/QueryProvider";
 
 export default function RootLayout({
   children,
@@ -25,29 +26,11 @@ export default function RootLayout({
           inter.variable
         )}
       >
-        <AuthProvider>
-          <div className="relative flex min-h-screen flex-col">
-          <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="container flex h-14 items-center">
-              <div className="mr-4 hidden md:flex">
-                <a className="mr-6 flex items-center space-x-2" href="/">
-                  <span className="hidden font-bold sm:inline-block">
-                    Smart ATS
-                  </span>
-                </a>
-                <nav className="flex items-center space-x-6 text-sm font-medium">
-                  <a className="transition-colors hover:text-foreground/80 text-foreground/60" href="/dashboard">Dashboard</a>
-                  <a className="transition-colors hover:text-foreground/80 text-foreground/60" href="/jobs">Jobs</a>
-                  <a className="transition-colors hover:text-foreground/80 text-foreground/60" href="/candidates">Candidates</a>
-                </nav>
-              </div>
-            </div>
-          </header>
-          <div className="flex-1">
+        <QueryProvider>
+          <AuthProvider>
             {children}
-          </div>
-        </div>
-        </AuthProvider>
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );
