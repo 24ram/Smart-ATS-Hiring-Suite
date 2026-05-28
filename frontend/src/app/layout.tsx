@@ -10,6 +10,8 @@ export const metadata: Metadata = {
   description: "Production-grade AI-powered Applicant Tracking System",
 };
 
+import { AuthProvider } from "@/providers/AuthProvider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -23,7 +25,8 @@ export default function RootLayout({
           inter.variable
         )}
       >
-        <div className="relative flex min-h-screen flex-col">
+        <AuthProvider>
+          <div className="relative flex min-h-screen flex-col">
           <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container flex h-14 items-center">
               <div className="mr-4 hidden md:flex">
@@ -44,6 +47,7 @@ export default function RootLayout({
             {children}
           </div>
         </div>
+        </AuthProvider>
       </body>
     </html>
   );
