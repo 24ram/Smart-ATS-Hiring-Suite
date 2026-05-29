@@ -4,12 +4,16 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/providers/AuthProvider';
-import { LayoutDashboard, Briefcase, Users, BarChart, Settings, Menu, X, LogOut } from 'lucide-react';
+import { LayoutDashboard, Briefcase, Users, Calendar, BarChart, Settings, Menu, X, LogOut, Kanban, Inbox, FileText } from 'lucide-react';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Jobs', href: '/dashboard/jobs', icon: Briefcase },
+  { name: 'Applications', href: '/dashboard/applications', icon: Inbox },
+  { name: 'Offers', href: '/dashboard/offers', icon: FileText },
   { name: 'Candidates', href: '/dashboard/candidates', icon: Users },
+  { name: 'Interviews', href: '/dashboard/interviews', icon: Calendar },
+  { name: 'Pipeline', href: '/dashboard/pipeline', icon: Kanban },
   { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart },
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ];

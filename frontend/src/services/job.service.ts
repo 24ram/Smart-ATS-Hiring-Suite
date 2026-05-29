@@ -6,8 +6,11 @@ export interface Job {
   company: string;
   location: string;
   employment_type: string;
+  department?: string;
+  experience_level?: string;
   description: string;
   requirements: string[];
+  skills: string[];
   salary_range?: string;
   status: string;
   created_by: string;
@@ -20,8 +23,18 @@ export const jobService = {
     return response.data;
   },
 
+  async getPublicJobs(): Promise<Job[]> {
+    const response = await api.get('/public/jobs');
+    return response.data;
+  },
+
   async getJob(id: string): Promise<Job> {
     const response = await api.get(`/jobs/${id}`);
+    return response.data;
+  },
+
+  async getPublicJobById(id: string): Promise<Job> {
+    const response = await api.get(`/public/jobs/${id}`);
     return response.data;
   },
 
