@@ -2,13 +2,13 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { candidatePortalService } from '@/services/candidate-portal.service';
-import { User, FileText, Sparkles, UploadCloud, CheckCircle2, AlertCircle, Phone, Mail, Linkedin, Github } from 'lucide-react';
+import { User, FileText, Sparkles, UploadCloud, CheckCircle2, AlertCircle, Phone, Mail } from 'lucide-react';
 
 export default function CandidateProfilePage() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
-  const [uploadStatus, setUploadStatus] = useState<{type: 'success' | 'error', message: string} | null>(null);
+  const [uploadStatus, setUploadStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export default function CandidateProfilePage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          
+
           <div className="bg-gray-900 border border-gray-800 rounded-xl p-8 shadow-sm">
             <h2 className="text-xl font-semibold text-white mb-6">Personal Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -102,12 +102,12 @@ export default function CandidateProfilePage() {
 
           <div className="bg-gray-900 border border-gray-800 rounded-xl p-8 shadow-sm relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-bl-[100px] pointer-events-none" />
-            
+
             <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
               <Sparkles className="w-5 h-5 mr-2 text-purple-400" />
               AI Analysis & Skills
             </h2>
-            
+
             {profile?.resume_url ? (
               <div className="space-y-6">
                 <div>
@@ -141,17 +141,16 @@ export default function CandidateProfilePage() {
               </div>
             )}
           </div>
-          
+
         </div>
-        
+
         <div className="space-y-8">
           <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-white mb-4">Resume</h2>
-            
+
             {uploadStatus && (
-              <div className={`p-3 rounded-lg mb-4 text-sm flex items-start ${
-                uploadStatus.type === 'success' ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'
-              }`}>
+              <div className={`p-3 rounded-lg mb-4 text-sm flex items-start ${uploadStatus.type === 'success' ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                }`}>
                 {uploadStatus.type === 'success' ? <CheckCircle2 className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" /> : <AlertCircle className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />}
                 {uploadStatus.message}
               </div>
@@ -183,11 +182,10 @@ export default function CandidateProfilePage() {
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
-                className={`w-full flex items-center justify-center p-6 border-2 border-dashed rounded-xl transition-all ${
-                  uploading 
-                    ? 'border-gray-700 bg-gray-800/50 cursor-not-allowed' 
+                className={`w-full flex items-center justify-center p-6 border-2 border-dashed rounded-xl transition-all ${uploading
+                    ? 'border-gray-700 bg-gray-800/50 cursor-not-allowed'
                     : 'border-gray-700 hover:border-purple-500 hover:bg-purple-500/5 cursor-pointer'
-                }`}
+                  }`}
               >
                 <div className="text-center">
                   <UploadCloud className={`w-8 h-8 mx-auto mb-2 ${uploading ? 'text-gray-600 animate-pulse' : 'text-gray-400'}`} />
