@@ -60,12 +60,12 @@ export default function PublicJobDetailsPage() {
         {/* Header */}
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8 mb-8 relative overflow-hidden shadow-lg">
           <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
-          
+
           <div className="relative z-10">
             <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4 tracking-tight">
               {job.title}
             </h1>
-            
+
             <div className="flex flex-wrap gap-4 text-sm font-medium text-gray-400 mb-8">
               <div className="flex items-center gap-1.5 bg-gray-800/50 px-3 py-1.5 rounded-lg border border-gray-700/50">
                 <Briefcase className="w-4 h-4 text-purple-400" />
@@ -77,14 +77,14 @@ export default function PublicJobDetailsPage() {
               </div>
               <div className="flex items-center gap-1.5 bg-gray-800/50 px-3 py-1.5 rounded-lg border border-gray-700/50">
                 <Clock className="w-4 h-4 text-emerald-400" />
-                {job.job_type}
+                {job.employment_type}
               </div>
               <div className="flex items-center gap-1.5 bg-gray-800/50 px-3 py-1.5 rounded-lg border border-gray-700/50 text-gray-300">
                 {job.salary_range}
               </div>
             </div>
 
-            <button 
+            <button
               onClick={() => setIsApplyModalOpen(true)}
               className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-purple-600/20 active:scale-95"
             >
@@ -134,10 +134,10 @@ export default function PublicJobDetailsPage() {
       </div>
 
       {isApplyModalOpen && (
-        <ApplicationModal 
-          jobId={job.id} 
-          jobTitle={job.title} 
-          onClose={() => setIsApplyModalOpen(false)} 
+        <ApplicationModal
+          jobId={job.id}
+          jobTitle={job.title}
+          onClose={() => setIsApplyModalOpen(false)}
         />
       )}
     </div>
@@ -148,7 +148,7 @@ function ApplicationModal({ jobId, jobTitle, onClose }: { jobId: string, jobTitl
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
 
@@ -185,7 +185,7 @@ function ApplicationModal({ jobId, jobTitle, onClose }: { jobId: string, jobTitl
       setError("Please upload your resume");
       return;
     }
-    
+
     setIsSubmitting(true);
     setError("");
 
@@ -195,7 +195,7 @@ function ApplicationModal({ jobId, jobTitle, onClose }: { jobId: string, jobTitl
       data.append('name', formData.name);
       data.append('email', formData.email);
       data.append('resume', file);
-      
+
       if (formData.phone) data.append('phone', formData.phone);
       if (formData.linkedin_url) data.append('linkedin_url', formData.linkedin_url);
       if (formData.github_url) data.append('github_url', formData.github_url);
@@ -222,7 +222,7 @@ function ApplicationModal({ jobId, jobTitle, onClose }: { jobId: string, jobTitl
           <p className="text-gray-400 mb-8">
             Thank you for applying for the {jobTitle} role. Our team will review your profile and get back to you soon.
           </p>
-          <button 
+          <button
             onClick={onClose}
             className="w-full bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-xl transition-all"
           >
@@ -236,7 +236,7 @@ function ApplicationModal({ jobId, jobTitle, onClose }: { jobId: string, jobTitl
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto">
       <div className="bg-gray-900 rounded-2xl w-full max-w-2xl border border-gray-700 shadow-2xl my-8 flex flex-col max-h-[90vh]">
-        
+
         <div className="p-6 border-b border-gray-800 flex justify-between items-center shrink-0">
           <div>
             <h2 className="text-xl font-bold text-white">Apply for {jobTitle}</h2>
@@ -255,15 +255,15 @@ function ApplicationModal({ jobId, jobTitle, onClose }: { jobId: string, jobTitl
           )}
 
           <form id="app-form" onSubmit={handleSubmit} className="space-y-6">
-            
+
             {/* Resume Upload */}
             <div className="bg-gray-800/50 border border-gray-700 border-dashed rounded-xl p-6 text-center">
-              <input 
-                type="file" 
-                ref={fileInputRef} 
-                onChange={handleFileChange} 
-                accept=".pdf,.docx" 
-                className="hidden" 
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept=".pdf,.docx"
+                className="hidden"
               />
               {!file ? (
                 <div className="cursor-pointer flex flex-col items-center" onClick={() => fileInputRef.current?.click()}>
@@ -276,8 +276,8 @@ function ApplicationModal({ jobId, jobTitle, onClose }: { jobId: string, jobTitl
               ) : (
                 <div className="flex items-center justify-between bg-gray-900 px-4 py-3 rounded-lg border border-gray-700">
                   <span className="text-sm text-gray-300 truncate pr-4">{file.name}</span>
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={() => setFile(null)}
                     className="text-gray-500 hover:text-red-400 transition"
                   >

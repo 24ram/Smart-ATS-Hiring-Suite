@@ -225,7 +225,7 @@ function NotesModal({ application, onClose }: { application: Application, onClos
 
   const { data: candidate } = useQuery({
     queryKey: ['candidate', application.candidate_id],
-    queryFn: () => candidateService.getCandidate(application.candidate_id),
+    queryFn: () => candidateService.getCandidateById(application.candidate_id),
   });
 
   const mutation = useMutation({

@@ -117,7 +117,7 @@ export default function PublicJobsPage() {
                       </div>
                       <div className="flex items-center gap-1">
                         <Clock className="w-4 h-4" />
-                        {job.job_type}
+                        {job.employment_type}
                       </div>
                     </div>
                   </div>
