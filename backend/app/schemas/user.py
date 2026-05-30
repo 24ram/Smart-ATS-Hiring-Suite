@@ -8,10 +8,16 @@ class UserRole(str, Enum):
     recruiter = "recruiter"
     hiring_manager = "hiring_manager"
 
+class UserStatus(str, Enum):
+    pending = "pending"
+    approved = "approved"
+    rejected = "rejected"
+
 class UserBase(BaseModel):
     name: str = Field(..., min_length=2, max_length=50)
     email: EmailStr
     role: UserRole = UserRole.recruiter
+    status: UserStatus = UserStatus.pending
 
 class UserCreate(UserBase):
     password: str = Field(..., min_length=6)

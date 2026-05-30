@@ -33,6 +33,13 @@ async def login(
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
+        
+    if user.get("role") in ["recruiter", "hiring_manager"]:
+        status_val = user.get("status", "approved")
+        if status_val == "pending":
+            raise HTTPException(status_code=403, detail="Your account is awaiting administrator approval.")
+        elif status_val == "rejected":
+            raise HTTPException(status_code=403, detail="Your request was rejected.")
     
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     return {
@@ -54,6 +61,13 @@ async def login_json(user_in: UserLogin) -> Any:
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
+        
+    if user.get("role") in ["recruiter", "hiring_manager"]:
+        status_val = user.get("status", "approved")
+        if status_val == "pending":
+            raise HTTPException(status_code=403, detail="Your account is awaiting administrator approval.")
+        elif status_val == "rejected":
+            raise HTTPException(status_code=403, detail="Your request was rejected.")
     
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     return {
