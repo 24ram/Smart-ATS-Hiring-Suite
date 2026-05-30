@@ -10,19 +10,19 @@ import { scorecardService } from "@/services/scorecard.service";
 import { offerService } from "@/services/offer.service";
 import { applicationService, Application } from "@/services/application.service";
 import toast from "react-hot-toast";
-import { 
-  ArrowLeft, 
-  User, 
-  Mail, 
-  Phone, 
-  Calendar, 
-  Download, 
-  CheckCircle2, 
-  AlertCircle, 
-  BrainCircuit, 
-  Briefcase, 
-  Clock, 
-  MessageSquarePlus, 
+import {
+  ArrowLeft,
+  User,
+  Mail,
+  Phone,
+  Calendar,
+  Download,
+  CheckCircle2,
+  AlertCircle,
+  BrainCircuit,
+  Briefcase,
+  Clock,
+  MessageSquarePlus,
   Copy,
   ChevronDown,
   Video,
@@ -62,7 +62,7 @@ export default function CandidateDetailsPage() {
     queryKey: ["offers"],
     queryFn: () => offerService.getOffers(),
   });
-  
+
   const candidateOffers = (offers || []).filter(o => o.candidate_id === candidateId);
 
   const { data: applications } = useQuery({
@@ -133,7 +133,7 @@ export default function CandidateDetailsPage() {
   return (
     <div className="pb-12 max-w-7xl mx-auto">
       {/* Back Button */}
-      <button 
+      <button
         onClick={() => router.push("/dashboard/candidates")}
         className="flex items-center text-gray-400 hover:text-white mb-6 transition"
       >
@@ -166,10 +166,10 @@ export default function CandidateDetailsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
+
         {/* LEFT COLUMN: Profile info, AI Panel, Jobs */}
         <div className="lg:col-span-2 space-y-6">
-          
+
           {/* Header Card */}
           <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-sm backdrop-blur-sm bg-opacity-80">
             <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
@@ -184,7 +184,7 @@ export default function CandidateDetailsPage() {
               <div className="flex-1">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
                   <h1 className="text-2xl font-bold text-white">{candidate.name}</h1>
-                  
+
                   <div className="flex items-center gap-3">
                     <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getScoreColor(candidate.ai_score)}`}>
                       {candidate.ai_score ? `AI Score: ${candidate.ai_score}%` : "Not Evaluated"}
@@ -219,7 +219,7 @@ export default function CandidateDetailsPage() {
                 </div>
               </div>
             </div>
-            
+
             {/* Skills */}
             <div className="mt-6 pt-6 border-t border-gray-800">
               <h3 className="text-sm font-semibold text-gray-400 mb-3 uppercase tracking-wider">Extracted Skills</h3>
@@ -239,7 +239,7 @@ export default function CandidateDetailsPage() {
           {candidate.ai_analysis ? (
             <div className="bg-gradient-to-br from-blue-900/40 to-purple-900/40 border border-blue-800/50 rounded-xl p-6 shadow-lg shadow-blue-900/10 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
-              
+
               <div className="flex items-center gap-2 mb-6">
                 <BrainCircuit className="w-6 h-6 text-blue-400" />
                 <h2 className="text-xl font-bold text-white">AI Match Intelligence</h2>
@@ -280,7 +280,7 @@ export default function CandidateDetailsPage() {
                         {skill}
                       </span>
                     ))}
-                     {candidate.ai_analysis.missing_skills.length === 0 && (
+                    {candidate.ai_analysis.missing_skills.length === 0 && (
                       <span className="text-gray-500 text-sm">No missing core skills</span>
                     )}
                   </div>
@@ -329,7 +329,7 @@ export default function CandidateDetailsPage() {
                   {scorecards.length} evaluations
                 </span>
               </div>
-              
+
               <div className="space-y-4">
                 {scorecards.map(scorecard => (
                   <div key={scorecard.id} className="bg-gray-800/50 border border-gray-700 rounded-lg p-5">
@@ -343,18 +343,17 @@ export default function CandidateDetailsPage() {
                           <Star className="w-4 h-4 text-yellow-400 fill-current" />
                           <span className="text-sm font-bold text-white">{scorecard.overall_score.toFixed(1)}</span>
                         </div>
-                        <span className={`px-2 py-1 rounded text-xs font-bold ${
-                          scorecard.recommendation === 'strong_hire' ? 'bg-green-600 text-white' :
+                        <span className={`px-2 py-1 rounded text-xs font-bold ${scorecard.recommendation === 'strong_hire' ? 'bg-green-600 text-white' :
                           scorecard.recommendation === 'hire' ? 'bg-emerald-500 text-white' :
-                          scorecard.recommendation === 'no_hire' ? 'bg-orange-500 text-white' :
-                          scorecard.recommendation === 'strong_no_hire' ? 'bg-red-600 text-white' :
-                          'bg-gray-600 text-white'
-                        }`}>
+                            scorecard.recommendation === 'no_hire' ? 'bg-orange-500 text-white' :
+                              scorecard.recommendation === 'strong_no_hire' ? 'bg-red-600 text-white' :
+                                'bg-gray-600 text-white'
+                          }`}>
                           {scorecard.recommendation.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
                         </span>
                       </div>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
                       {Object.entries(scorecard.ratings).map(([key, val]) => (
                         <div key={key} className="bg-gray-900 rounded p-2 border border-gray-700 flex justify-between items-center">
@@ -363,7 +362,7 @@ export default function CandidateDetailsPage() {
                         </div>
                       ))}
                     </div>
-                    
+
                     <div className="bg-gray-900/50 rounded p-3 text-sm text-gray-300 italic border border-gray-800">
                       "{scorecard.feedback_text}"
                     </div>
@@ -383,7 +382,7 @@ export default function CandidateDetailsPage() {
                   {candidateOffers.length} offers
                 </span>
               </div>
-              
+
               <div className="space-y-4">
                 {candidateOffers.map(offer => {
                   let statusColor = "bg-gray-600 text-white";
@@ -407,7 +406,7 @@ export default function CandidateDetailsPage() {
                           </span>
                         </div>
                       </div>
-                      
+
                       <div className="grid grid-cols-2 gap-3 mb-4 bg-gray-900 rounded-lg p-3 border border-gray-700">
                         <div>
                           <span className="text-xs text-gray-500 uppercase tracking-wider block mb-1">Salary</span>
@@ -420,7 +419,7 @@ export default function CandidateDetailsPage() {
                       </div>
 
                       <div className="flex justify-end">
-                        <button 
+                        <button
                           onClick={() => router.push('/dashboard/offers')}
                           className="text-xs text-blue-400 hover:text-blue-300 font-medium"
                         >
@@ -466,14 +465,14 @@ export default function CandidateDetailsPage() {
 
         {/* RIGHT COLUMN: Notes & Resume Preview */}
         <div className="space-y-6">
-          
+
           {/* Notes Timeline */}
           <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-sm flex flex-col h-[400px]">
             <div className="flex items-center gap-2 mb-4">
               <MessageSquarePlus className="w-5 h-5 text-gray-400" />
               <h2 className="text-lg font-bold text-white">Recruiter Notes</h2>
             </div>
-            
+
             <div className="flex-1 overflow-y-auto pr-2 space-y-4 mb-4 custom-scrollbar">
               {candidate.notes && candidate.notes.length > 0 ? (
                 candidate.notes.map((note, idx) => {
@@ -507,8 +506,8 @@ export default function CandidateDetailsPage() {
 
             <div className="mt-auto">
               <div className="flex gap-2">
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={newNote}
                   onChange={(e) => setNewNote(e.target.value)}
                   placeholder="Type a note..."
@@ -519,7 +518,7 @@ export default function CandidateDetailsPage() {
                     }
                   }}
                 />
-                <button 
+                <button
                   onClick={() => {
                     if (newNote.trim()) addNoteMutation.mutate(newNote);
                   }}
@@ -538,7 +537,7 @@ export default function CandidateDetailsPage() {
               <ActivityIcon className="w-5 h-5 text-gray-400" />
               <h2 className="text-lg font-bold text-white">Activity Timeline</h2>
             </div>
-            
+
             <div className="flex-1 overflow-y-auto pr-2 space-y-4 custom-scrollbar">
               {candidate.activities && candidate.activities.length > 0 ? (
                 // sort activities by timestamp descending
@@ -567,8 +566,8 @@ export default function CandidateDetailsPage() {
             <div className="p-4 border-b border-gray-800 flex justify-between items-center bg-gray-900/80 backdrop-blur z-10">
               <h2 className="text-sm font-bold text-white uppercase tracking-wider">Resume Preview</h2>
               {candidate.resume_url && (
-                <a 
-                  href={`http://localhost:8000${candidate.resume_url}`} 
+                <a
+                  href={`${process.env.NEXT_PUBLIC_BACKEND_URL}${candidate.resume_url}`}
                   target="_blank"
                   download
                   className="text-gray-400 hover:text-white transition flex items-center gap-1 text-sm bg-gray-800 px-3 py-1.5 rounded-md border border-gray-700"
@@ -577,12 +576,12 @@ export default function CandidateDetailsPage() {
                 </a>
               )}
             </div>
-            
+
             <div className="flex-1 bg-gray-800 flex items-center justify-center relative">
               {candidate.resume_url ? (
                 candidate.resume_url.toLowerCase().endsWith('.pdf') ? (
-                  <iframe 
-                    src={`http://localhost:8000${candidate.resume_url}#toolbar=0`} 
+                  <iframe
+                    src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${candidate.resume_url}#toolbar=0`}
                     className="w-full h-full border-none"
                     title="Resume Preview"
                   />
@@ -590,8 +589,8 @@ export default function CandidateDetailsPage() {
                   <div className="text-center p-6">
                     <AlertCircle className="w-12 h-12 text-yellow-500 mx-auto mb-3" />
                     <p className="text-gray-300 mb-2">Preview not available for this file type.</p>
-                    <a 
-                      href={`http://localhost:8000${candidate.resume_url}`} 
+                    <a
+                      href={`${process.env.NEXT_PUBLIC_BACKEND_URL}${candidate.resume_url}`}
                       className="text-blue-400 hover:underline"
                     >
                       Download to view
@@ -611,10 +610,10 @@ export default function CandidateDetailsPage() {
 
       {/* Schedule Interview Modal */}
       {isInterviewModalOpen && (
-        <ScheduleInterviewModal 
-          candidateId={candidate.id} 
-          jobs={jobs || []} 
-          onClose={() => setIsInterviewModalOpen(false)} 
+        <ScheduleInterviewModal
+          candidateId={candidate.id}
+          jobs={jobs || []}
+          onClose={() => setIsInterviewModalOpen(false)}
           onSuccess={() => {
             setIsInterviewModalOpen(false);
             queryClient.invalidateQueries({ queryKey: ["candidate", candidateId] });
@@ -624,11 +623,11 @@ export default function CandidateDetailsPage() {
 
       {/* Generate Offer Modal */}
       {isOfferModalOpen && (
-        <GenerateOfferModal 
-          candidateId={candidate.id} 
+        <GenerateOfferModal
+          candidateId={candidate.id}
           candidateName={candidate.name}
-          jobs={jobs || []} 
-          onClose={() => setIsOfferModalOpen(false)} 
+          jobs={jobs || []}
+          onClose={() => setIsOfferModalOpen(false)}
           onSuccess={() => {
             setIsOfferModalOpen(false);
             queryClient.invalidateQueries({ queryKey: ["candidate", candidateId] });
@@ -664,7 +663,7 @@ function ApplicationStageDropdown({ application }: { application: Application })
 
   return (
     <div className="relative">
-      <button 
+      <button
         onClick={() => setIsOpen(!isOpen)}
         className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ${getStageColor(application.status)}`}
       >
@@ -708,7 +707,7 @@ function ScheduleInterviewModal({ candidateId, jobs, onClose, onSuccess }: { can
       alert("Please fill all fields");
       return;
     }
-    
+
     mutation.mutate({
       candidate_id: candidateId,
       job_id: jobId,
@@ -722,7 +721,7 @@ function ScheduleInterviewModal({ candidateId, jobs, onClose, onSuccess }: { can
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
       <div className="bg-gray-900 rounded-2xl w-full max-w-md border border-gray-700 shadow-2xl p-6">
         <h2 className="text-2xl font-bold text-white mb-6">Schedule Interview</h2>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm text-gray-400 mb-1">Select Job</label>
@@ -812,7 +811,7 @@ function GenerateOfferModal({ candidateId, candidateName, jobs, onClose, onSucce
       alert("Please fill all fields");
       return;
     }
-    
+
     mutation.mutate({
       candidate_id: candidateId,
       job_id: jobId,
@@ -828,7 +827,7 @@ function GenerateOfferModal({ candidateId, candidateName, jobs, onClose, onSucce
           <FileText className="w-6 h-6 text-blue-400" />
           Generate Offer
         </h2>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm text-gray-400 mb-1">Candidate</label>
