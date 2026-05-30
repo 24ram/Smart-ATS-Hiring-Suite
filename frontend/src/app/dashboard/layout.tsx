@@ -15,6 +15,7 @@ const navigation = [
   { name: 'Interviews', href: '/dashboard/interviews', icon: Calendar },
   { name: 'Pipeline', href: '/dashboard/pipeline', icon: Kanban },
   { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart },
+  { name: 'Admin', href: '/dashboard/admin', icon: Settings },
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ];
 
@@ -57,6 +58,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
             <nav className="mt-5 flex-1 space-y-1 px-2">
               {navigation.map((item) => {
+                if (item.name === 'Admin' && user?.role !== 'admin') return null;
                 const isActive = pathname === item.href;
                 return (
                   <Link
@@ -89,7 +91,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
             <nav className="mt-5 flex-1 space-y-1 bg-white dark:bg-gray-800 px-2">
               {navigation.map((item) => {
-                const isActive = pathname === item.href;
+                if (item.name === 'Admin' && user?.role !== 'admin') return null;
+                const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
                 return (
                   <Link
                     key={item.name}

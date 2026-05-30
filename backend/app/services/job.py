@@ -5,8 +5,12 @@ from app.db.mongodb import db
 from app.schemas.job import JobCreate, JobUpdate
 from app.schemas.user import UserRole
 
-async def get_jobs(skip: int = 0, limit: int = 100) -> list[dict]:
-    cursor = db.db["jobs"].find().skip(skip).limit(limit)
+async def get_jobs(skip: int = 0, limit: int = 100, current_user: dict = None) -> list[dict]:
+    query = {}
+    if current_user and current_user.get("role") == UserRole.hiring_manager:
+        query["assigned_hiring_manager_id"] = current_user["id"]
+        
+    cursor = db.db["jobs"].find(query).skip(skip).limit(limit)
     jobs = await cursor.to_list(length=limit)
     for job in jobs:
         job["id"] = str(job["_id"])

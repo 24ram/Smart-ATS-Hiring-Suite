@@ -13,6 +13,7 @@ export interface Job {
   skills: string[];
   salary_range?: string;
   status: string;
+  assigned_hiring_manager_id?: string;
   created_by: string;
   created_at: string;
 }
@@ -20,6 +21,11 @@ export interface Job {
 export const jobService = {
   async getJobs(): Promise<Job[]> {
     const response = await api.get('/jobs/');
+    return response.data;
+  },
+
+  async getHiringManagers(): Promise<{id: string, name: string, email: string}[]> {
+    const response = await api.get('/jobs/hiring_managers');
     return response.data;
   },
 

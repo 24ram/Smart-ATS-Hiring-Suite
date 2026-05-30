@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { jobService, Job } from '@/services/job.service';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Loader2, X, ChevronDown } from 'lucide-react';
@@ -157,6 +157,7 @@ interface CreateJobModalProps {
 
 export function CreateJobModal({ isOpen, onClose, job }: CreateJobModalProps) {
   const queryClient = useQueryClient();
+  const { data: managers } = useQuery({ queryKey: ['hiring_managers'], queryFn: () => jobService.getHiringManagers() });
   const [formData, setFormData] = useState({
     company: '',
     employment_type: 'full_time',
@@ -165,7 +166,8 @@ export function CreateJobModal({ isOpen, onClose, job }: CreateJobModalProps) {
     status: 'draft',
     salary_range: '',
     description: '',
-    requirements: ''
+    requirements: '',
+    assigned_hiring_manager_id: ''
   });
   
   const [skills, setSkills] = useState<string[]>([]);
@@ -183,7 +185,8 @@ export function CreateJobModal({ isOpen, onClose, job }: CreateJobModalProps) {
         status: job.status || 'published',
         salary_range: job.salary_range || '',
         description: job.description || '',
-        requirements: job.requirements?.join('\n') || ''
+        requirements: job.requirements?.join('\n') || '',
+        assigned_hiring_manager_id: job.assigned_hiring_manager_id || ''
       });
       setTitleSearch(job.title || '');
       setLocationSearch(job.location || '');
@@ -197,7 +200,7 @@ export function CreateJobModal({ isOpen, onClose, job }: CreateJobModalProps) {
     setFormData({
       company: '', employment_type: 'full_time', department: '', 
       experience_level: '', status: 'draft', salary_range: '',
-      description: '', requirements: ''
+      description: '', requirements: '', assigned_hiring_manager_id: ''
     });
     setTitleSearch('');
     setLocationSearch('');
@@ -355,6 +358,20 @@ export function CreateJobModal({ isOpen, onClose, job }: CreateJobModalProps) {
                     className="appearance-none w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3.5 py-2.5 pr-10 text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors font-medium"
                   >
                     {STATUSES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
+
+              <div className="relative">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Assign Hiring Manager</label>
+                <div className="relative">
+                  <select
+                    name="assigned_hiring_manager_id" value={formData.assigned_hiring_manager_id} onChange={handleChange}
+                    className="appearance-none w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3.5 py-2.5 pr-10 text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors font-medium"
+                  >
+                    <option value="">Unassigned</option>
+                    {managers?.map(m => <option key={m.id} value={m.id}>{m.name} ({m.email})</option>)}
                   </select>
                   <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-gray-400 pointer-events-none" />
                 </div>

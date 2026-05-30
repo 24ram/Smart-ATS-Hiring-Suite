@@ -14,6 +14,18 @@ from app.schemas.user import UserRole
 
 router = APIRouter()
 
+@router.get("/hiring_managers")
+async def get_hiring_managers(
+    current_user: dict = Depends(get_current_user)
+):
+    from app.db.mongodb import db
+    cursor = db.db["users"].find({"role": "hiring_manager"}, {"hashed_password": 0})
+    users = await cursor.to_list(length=500)
+    for u in users:
+        u["id"] = str(u["_id"])
+        del u["_id"]
+    return users
+
 
 @router.post("/", response_model=JobResponse, status_code=status.HTTP_201_CREATED)
 async def create_new_job(
@@ -35,7 +47,7 @@ async def read_jobs(
     limit: int = 100,
     current_user: dict = Depends(get_current_user)
 ):
-    return await get_jobs(skip=skip, limit=limit)
+    return await get_jobs(skip=skip, limit=limit, current_user=current_user)
 
 
 @router.get("/{job_id}", response_model=JobResponse)

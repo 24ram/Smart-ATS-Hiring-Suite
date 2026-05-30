@@ -66,12 +66,9 @@ export default function OffersDashboardPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'draft': return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
-      case 'sent': return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
-      case 'viewed': return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
+      case 'pending': return 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20';
       case 'accepted': return 'bg-green-500/10 text-green-400 border-green-500/20';
-      case 'declined': return 'bg-red-500/10 text-red-400 border-red-500/20';
-      case 'expired': return 'bg-orange-500/10 text-orange-400 border-orange-500/20';
+      case 'rejected': return 'bg-red-500/10 text-red-400 border-red-500/20';
       default: return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
     }
   };
@@ -109,12 +106,9 @@ export default function OffersDashboardPage() {
             className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500"
           >
             <option value="all">All Statuses</option>
-            <option value="draft">Draft</option>
-            <option value="sent">Sent</option>
-            <option value="viewed">Viewed</option>
+            <option value="pending">Pending</option>
             <option value="accepted">Accepted</option>
-            <option value="declined">Declined</option>
-            <option value="expired">Expired</option>
+            <option value="rejected">Rejected</option>
           </select>
         </div>
       </div>
@@ -159,35 +153,6 @@ export default function OffersDashboardPage() {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-1">
                         
-                        {/* Status Actions */}
-                        {offer.status === 'draft' && (
-                          <button 
-                            onClick={() => updateStatusMutation.mutate({ id: offer.id, status: 'sent' })}
-                            className="p-1.5 text-gray-400 hover:text-blue-400 hover:bg-blue-400/10 rounded transition mr-1"
-                            title="Send Offer"
-                          >
-                            <Send className="w-4 h-4" />
-                          </button>
-                        )}
-                        {offer.status === 'sent' && (
-                          <>
-                            <button 
-                              onClick={() => updateStatusMutation.mutate({ id: offer.id, status: 'accepted' })}
-                              className="p-1.5 text-gray-400 hover:text-green-400 hover:bg-green-400/10 rounded transition"
-                              title="Accept Offer"
-                            >
-                              <CheckCircle className="w-4 h-4" />
-                            </button>
-                            <button 
-                              onClick={() => updateStatusMutation.mutate({ id: offer.id, status: 'declined' })}
-                              className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded transition mr-1"
-                              title="Decline Offer"
-                            >
-                              <XCircle className="w-4 h-4" />
-                            </button>
-                          </>
-                        )}
-
                         <div className="w-px h-4 bg-gray-700 mx-1"></div>
 
                         {/* Standard Actions */}

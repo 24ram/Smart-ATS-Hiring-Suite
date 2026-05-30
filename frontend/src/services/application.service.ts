@@ -8,11 +8,12 @@ export interface Application {
   linkedin_url?: string;
   github_url?: string;
   portfolio_url?: string;
-  status: 'pending' | 'reviewed' | 'rejected';
+  status: 'applied' | 'screening' | 'interview' | 'technical' | 'hr' | 'offer' | 'offered' | 'hired' | 'rejected';
   ai_score?: number;
   candidate_name?: string;
   candidate_email?: string;
   job_title?: string;
+  hm_feedback?: string;
   created_at: string;
   updated_at?: string;
 }
@@ -25,14 +26,21 @@ export const applicationService = {
     return response.data;
   },
 
-  async getApplications(jobId?: string): Promise<Application[]> {
-    const params = jobId ? { job_id: jobId } : {};
+  async getApplications(jobId?: string, candidateId?: string): Promise<Application[]> {
+    const params: any = {};
+    if (jobId) params.job_id = jobId;
+    if (candidateId) params.candidate_id = candidateId;
     const response = await api.get('/applications/', { params });
     return response.data;
   },
 
-  async updateStatus(id: string, status: 'pending' | 'reviewed' | 'rejected'): Promise<Application> {
+  async updateStatus(id: string, status: string): Promise<Application> {
     const response = await api.patch(`/applications/${id}/status`, { status });
+    return response.data;
+  },
+
+  async submitFeedback(id: string, feedback: string): Promise<Application> {
+    const response = await api.put(`/applications/${id}/feedback`, { feedback });
     return response.data;
   }
 };

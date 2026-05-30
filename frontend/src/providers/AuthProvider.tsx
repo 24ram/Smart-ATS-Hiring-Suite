@@ -38,7 +38,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await authService.login(data);
     const u = await authService.getCurrentUser();
     setUser(u);
-    router.push('/dashboard');
+    if (u.role === 'admin') {
+      router.push('/admin/dashboard');
+    } else if (u.role === 'hiring_manager') {
+      router.push('/hm/dashboard');
+    } else {
+      router.push('/dashboard');
+    }
   };
 
   const register = async (data: any) => {

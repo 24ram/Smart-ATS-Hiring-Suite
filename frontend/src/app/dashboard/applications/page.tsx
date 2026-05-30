@@ -24,7 +24,7 @@ export default function ApplicationsDashboardPage() {
   });
 
   const updateStatusMutation = useMutation({
-    mutationFn: ({ id, status }: { id: string, status: 'pending' | 'reviewed' | 'rejected' }) => 
+    mutationFn: ({ id, status }: { id: string, status: 'applied' | 'screening' | 'interview' | 'offer' | 'hired' | 'rejected' }) => 
       applicationService.updateStatus(id, status),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["applications"] });
@@ -95,8 +95,14 @@ export default function ApplicationsDashboardPage() {
             className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500"
           >
             <option value="all">All Statuses</option>
-            <option value="pending">Pending</option>
-            <option value="reviewed">Reviewed</option>
+            <option value="applied">Applied</option>
+            <option value="screening">Screening</option>
+            <option value="interview">Interview</option>
+            <option value="technical">Technical</option>
+            <option value="hr">HR</option>
+            <option value="offer">Offer</option>
+            <option value="offered">Offered</option>
+            <option value="hired">Hired</option>
             <option value="rejected">Rejected</option>
           </select>
         </div>
@@ -111,6 +117,7 @@ export default function ApplicationsDashboardPage() {
                 <th className="px-6 py-4 font-medium">Candidate</th>
                 <th className="px-6 py-4 font-medium">Job Role</th>
                 <th className="px-6 py-4 font-medium text-center">AI Match</th>
+                <th className="px-6 py-4 font-medium text-center">HM Feedback</th>
                 <th className="px-6 py-4 font-medium text-center">Status</th>
                 <th className="px-6 py-4 font-medium">Applied</th>
                 <th className="px-6 py-4 font-medium text-right">Actions</th>
@@ -133,13 +140,23 @@ export default function ApplicationsDashboardPage() {
                     </td>
                     <td className="px-6 py-4 text-center">
                       <span className={`px-2.5 py-1 rounded-md text-xs font-bold border ${getScoreColor(app.ai_score)}`}>
-                        {app.ai_score ? `${app.ai_score}%` : 'N/A'}
+                        {app.ai_score !== undefined && app.ai_score !== null ? `${app.ai_score}%` : 'N/A'}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-center">
                       <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                        app.status === 'pending' ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20' :
-                        app.status === 'reviewed' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
+                        app.hm_feedback === 'Hire' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
+                        app.hm_feedback === 'Hold' ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20' :
+                        app.hm_feedback === 'Reject' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
+                        'bg-gray-500/10 text-gray-400 border border-gray-500/20'
+                      }`}>
+                        {app.hm_feedback || 'Pending'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                        ['applied', 'screening'].includes(app.status) ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20' :
+                        ['interview', 'technical', 'hr', 'offer', 'offered', 'hired'].includes(app.status) ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
                         'bg-red-500/10 text-red-400 border border-red-500/20'
                       }`}>
                         {app.status}
@@ -150,19 +167,21 @@ export default function ApplicationsDashboardPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        {app.status === 'pending' && (
+                        {['applied', 'screening', 'interview', 'technical', 'hr'].includes(app.status) && (
                           <>
                             <button 
-                              onClick={() => updateStatusMutation.mutate({ id: app.id, status: 'reviewed' })}
-                              className="p-1.5 text-gray-400 hover:text-blue-400 hover:bg-blue-400/10 rounded transition"
-                              title="Mark as Reviewed"
+                              onClick={() => app.hm_feedback === 'Hire' && updateStatusMutation.mutate({ id: app.id, status: 'interview' })}
+                              disabled={app.hm_feedback !== 'Hire'}
+                              className={`p-1.5 rounded transition ${app.hm_feedback === 'Hire' ? 'text-gray-400 hover:text-blue-400 hover:bg-blue-400/10' : 'text-gray-600 cursor-not-allowed opacity-50'}`}
+                              title={app.hm_feedback === 'Hire' ? "Move to Interview" : "Blocked: HM Approval Required"}
                             >
                               <CheckCircle className="w-4 h-4" />
                             </button>
                             <button 
-                              onClick={() => updateStatusMutation.mutate({ id: app.id, status: 'rejected' })}
-                              className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded transition"
-                              title="Reject"
+                              onClick={() => app.hm_feedback === 'Hire' && updateStatusMutation.mutate({ id: app.id, status: 'rejected' })}
+                              disabled={app.hm_feedback !== 'Hire'}
+                              className={`p-1.5 rounded transition ${app.hm_feedback === 'Hire' ? 'text-gray-400 hover:text-red-400 hover:bg-red-400/10' : 'text-gray-600 cursor-not-allowed opacity-50'}`}
+                              title={app.hm_feedback === 'Hire' ? "Reject" : "Blocked: HM Approval Required"}
                             >
                               <XCircle className="w-4 h-4" />
                             </button>
@@ -181,7 +200,7 @@ export default function ApplicationsDashboardPage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center">
+                  <td colSpan={7} className="px-6 py-12 text-center">
                     <div className="flex flex-col items-center justify-center">
                       <Inbox className="w-12 h-12 text-gray-600 mb-3" />
                       <p className="text-gray-400 text-lg">No applications found</p>

@@ -13,8 +13,17 @@ class Settings(BaseSettings):
     
     OPENAI_API_KEY: str | None = None
     
+    SMTP_HOST: str = "smtp.gmail.com"
+    SMTP_PORT: int = 587
+    SMTP_USER: str = ""
+    SMTP_PASS: str = ""
+    SMTP_FROM_EMAIL: str = ""
+    
     class Config:
         env_file = ".env"
         extra = "allow"
 
 settings = Settings()
+
+print("SMTP_USER from settings =", settings.SMTP_USER)
+print("SMTP_FROM_EMAIL =", settings.SMTP_FROM_EMAIL)

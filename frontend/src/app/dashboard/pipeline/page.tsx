@@ -3,8 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
-import { candidateService, Candidate } from '@/services/candidate.service';
-import { MessageSquare, MoreVertical, Edit2, GripVertical, Loader2 } from 'lucide-react';
+import { applicationService, Application } from '@/services/application.service';
+import { candidateService } from '@/services/candidate.service';
+import { MessageSquare, MoreVertical, Edit2, GripVertical, Loader2, ExternalLink } from 'lucide-react';
+import Link from 'next/link';
 
 const STAGES = [
   { id: 'applied', name: 'Applied' },
@@ -12,6 +14,7 @@ const STAGES = [
   { id: 'interview', name: 'Interview' },
   { id: 'technical', name: 'Technical' },
   { id: 'hr', name: 'HR' },
+  { id: 'offer', name: 'Offer' },
   { id: 'offered', name: 'Offered' },
   { id: 'hired', name: 'Hired' },
   { id: 'rejected', name: 'Rejected' },
@@ -20,46 +23,52 @@ const STAGES = [
 export default function PipelinePage() {
   const [isMounted, setIsMounted] = useState(false);
   const queryClient = useQueryClient();
-  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
+  const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
   const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  const { data: candidates, isLoading } = useQuery({
-    queryKey: ['candidates'],
-    queryFn: () => candidateService.getCandidates(),
+  const { data: applications, isLoading } = useQuery({
+    queryKey: ['applications'],
+    queryFn: () => applicationService.getApplications(),
   });
 
+  useEffect(() => {
+    if (applications) {
+      console.log('Fetched applications:', applications);
+    }
+  }, [applications]);
+
   const stageMutation = useMutation({
-    mutationFn: ({ id, stage }: { id: string; stage: string }) => candidateService.updateStage(id, stage),
-    onMutate: async ({ id, stage }) => {
+    mutationFn: ({ id, status }: { id: string; status: string }) => applicationService.updateStatus(id, status),
+    onMutate: async ({ id, status }) => {
       // Cancel any outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ['candidates'] });
+      await queryClient.cancelQueries({ queryKey: ['applications'] });
 
       // Snapshot the previous value
-      const previousCandidates = queryClient.getQueryData<Candidate[]>(['candidates']);
+      const previousApplications = queryClient.getQueryData<Application[]>(['applications']);
 
       // Optimistically update to the new value
-      if (previousCandidates) {
-        queryClient.setQueryData<Candidate[]>(['candidates'], (old) => 
-          old?.map(c => c.id === id ? { ...c, stage } : c)
+      if (previousApplications) {
+        queryClient.setQueryData<Application[]>(['applications'], (old) => 
+          old?.map(a => a.id === id ? { ...a, status } : a)
         );
       }
 
       // Return a context object with the snapshotted value
-      return { previousCandidates };
+      return { previousApplications };
     },
-    onError: (err, newCandidate, context) => {
+    onError: (err, newApplication, context) => {
       // If the mutation fails, use the context returned from onMutate to roll back
-      if (context?.previousCandidates) {
-        queryClient.setQueryData(['candidates'], context.previousCandidates);
+      if (context?.previousApplications) {
+        queryClient.setQueryData(['applications'], context.previousApplications);
       }
     },
     onSettled: () => {
       // Always refetch after error or success
-      queryClient.invalidateQueries({ queryKey: ['candidates'] });
+      queryClient.invalidateQueries({ queryKey: ['applications'] });
     },
   });
 
@@ -78,22 +87,23 @@ export default function PipelinePage() {
     const newStage = destination.droppableId;
     
     // Check if the stage actually changed
-    const candidate = candidates?.find(c => c.id === draggableId);
-    if (candidate && (candidate.stage || 'applied') !== newStage) {
-      stageMutation.mutate({ id: draggableId, stage: newStage });
+    const application = applications?.find(a => a.id === draggableId);
+    if (application && (application.status || 'applied') !== newStage) {
+      stageMutation.mutate({ id: draggableId, status: newStage });
     }
   };
 
-  const openNotes = (candidate: Candidate) => {
-    setSelectedCandidate(candidate);
+  // Notes logic remains on candidate for now, but UI selects application
+  const openNotes = (application: Application) => {
+    setSelectedApplication(application);
     setIsNotesModalOpen(true);
   };
 
-  // Group candidates by stage
-  const groupedCandidates = STAGES.reduce((acc, stage) => {
-    acc[stage.id] = candidates?.filter(c => (c.stage || 'applied') === stage.id) || [];
+  // Group applications by stage
+  const groupedApplications = STAGES.reduce((acc, stage) => {
+    acc[stage.id] = applications?.filter(a => (a.status || 'applied') === stage.id) || [];
     return acc;
-  }, {} as Record<string, Candidate[]>);
+  }, {} as Record<string, Application[]>);
 
   if (!isMounted || isLoading) {
     return <div className="p-8 text-center text-gray-500 flex justify-center items-center h-full">
@@ -126,7 +136,7 @@ export default function PipelinePage() {
                 <div className="p-3 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-100 dark:bg-gray-800 rounded-t-lg">
                   <h3 className="font-medium text-gray-900 dark:text-white text-sm tracking-wide">{stage.name}</h3>
                   <span className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-semibold px-2 py-0.5 rounded-full">
-                    {groupedCandidates[stage.id]?.length || 0}
+                    {groupedApplications[stage.id]?.length || 0}
                   </span>
                 </div>
 
@@ -139,8 +149,8 @@ export default function PipelinePage() {
                         snapshot.isDraggingOver ? 'bg-blue-50/50 dark:bg-blue-900/20' : ''
                       }`}
                     >
-                      {groupedCandidates[stage.id]?.map((candidate, index) => (
-                        <Draggable key={candidate.id} draggableId={candidate.id} index={index}>
+                      {groupedApplications[stage.id]?.map((application, index) => (
+                        <Draggable key={application.id} draggableId={application.id} index={index}>
                           {(provided, snapshot) => (
                             <div 
                               ref={provided.innerRef}
@@ -156,42 +166,32 @@ export default function PipelinePage() {
                                   <div {...provided.dragHandleProps} className="mr-2 cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                                     <GripVertical className="w-4 h-4" />
                                   </div>
-                                  <span className="truncate">{candidate.name}</span>
+                                  <Link href={`/dashboard/candidates/${application.candidate_id}`} className="truncate hover:text-blue-500 hover:underline">
+                                    {application.candidate_name}
+                                  </Link>
                                 </div>
                               </div>
                               
-                              <div className="text-xs text-gray-500 dark:text-gray-400 mb-3 truncate pl-6">{candidate.email}</div>
+                              <div className="text-xs font-semibold text-blue-500 dark:text-blue-400 mb-1 truncate pl-6">{application.job_title}</div>
+                              <div className="text-xs text-gray-500 dark:text-gray-400 mb-3 truncate pl-6">{application.candidate_email}</div>
                               
                               <div className="pl-6">
-                                {candidate.ai_score !== undefined && candidate.ai_score !== null && (
+                                {application.ai_score !== undefined && application.ai_score !== null && (
                                   <div className="mb-3">
                                     <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-                                      candidate.ai_score >= 90 ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' :
-                                      candidate.ai_score >= 70 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                                      application.ai_score >= 90 ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' :
+                                      application.ai_score >= 70 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' :
                                       'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
                                     }`}>
-                                      AI Score: {candidate.ai_score}%
+                                      AI Score: {application.ai_score}%
                                     </span>
                                   </div>
                                 )}
 
-                                <div className="flex flex-wrap gap-1.5 mb-3">
-                                  {candidate.skills?.slice(0, 3).map(skill => (
-                                    <span key={skill} className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-[10px] rounded-md font-medium truncate max-w-[80px]">
-                                      {skill}
-                                    </span>
-                                  ))}
-                                  {candidate.skills && candidate.skills.length > 3 && (
-                                    <span className="px-1.5 py-0.5 bg-gray-50 dark:bg-gray-800 text-gray-400 text-[10px] rounded-md">
-                                      +{candidate.skills.length - 3}
-                                    </span>
-                                  )}
-                                </div>
-
                                 <div className="flex justify-between items-center pt-3 border-t border-gray-100 dark:border-gray-700 mt-2">
-                                  <button onClick={() => openNotes(candidate)} className="text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 flex items-center text-xs font-medium transition-colors">
+                                  <button onClick={() => openNotes(application)} className="text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 flex items-center text-xs font-medium transition-colors">
                                     <MessageSquare className="w-3.5 h-3.5 mr-1.5" />
-                                    Notes ({candidate.notes?.length || 0})
+                                    Add Note
                                   </button>
                                 </div>
                               </div>
@@ -209,12 +209,12 @@ export default function PipelinePage() {
         </DragDropContext>
       </div>
 
-      {isNotesModalOpen && selectedCandidate && (
+      {isNotesModalOpen && selectedApplication && (
         <NotesModal 
-          candidate={selectedCandidate} 
+          application={selectedApplication} 
           onClose={() => {
             setIsNotesModalOpen(false);
-            setSelectedCandidate(null);
+            setSelectedApplication(null);
           }} 
         />
       )}
@@ -222,14 +222,19 @@ export default function PipelinePage() {
   );
 }
 
-function NotesModal({ candidate, onClose }: { candidate: Candidate, onClose: () => void }) {
+function NotesModal({ application, onClose }: { application: Application, onClose: () => void }) {
   const queryClient = useQueryClient();
   const [note, setNote] = useState('');
+
+  const { data: candidate } = useQuery({
+    queryKey: ['candidate', application.candidate_id],
+    queryFn: () => candidateService.getCandidate(application.candidate_id),
+  });
   
   const mutation = useMutation({
-    mutationFn: (newNote: string) => candidateService.addNote(candidate.id, newNote),
+    mutationFn: (newNote: string) => candidateService.addNote(application.candidate_id, newNote),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['candidates'] });
+      queryClient.invalidateQueries({ queryKey: ['candidate', application.candidate_id] });
       setNote('');
     },
   });
@@ -250,11 +255,11 @@ function NotesModal({ candidate, onClose }: { candidate: Candidate, onClose: () 
             <h3 className="text-lg font-semibold leading-6 text-gray-900 dark:text-white mb-4 flex items-center">
               <MessageSquare className="w-5 h-5 mr-2 text-blue-500" />
               Recruiter Notes
-              <span className="ml-2 text-sm font-normal text-gray-500">({candidate.name})</span>
+              <span className="ml-2 text-sm font-normal text-gray-500">({application.candidate_name})</span>
             </h3>
             
             <div className="flex-1 overflow-y-auto mb-4 space-y-3 bg-gray-50/50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-100 dark:border-gray-700/50">
-              {candidate.notes && candidate.notes.length > 0 ? (
+              {candidate?.notes && candidate.notes.length > 0 ? (
                 candidate.notes.map((n, i) => (
                   <div key={i} className="text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-3.5 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
                     {n}

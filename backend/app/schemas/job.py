@@ -13,16 +13,22 @@ class EmploymentType(str, Enum):
     part_time = "part_time"
     contract = "contract"
     internship = "internship"
+    remote = "remote"
+    hybrid = "hybrid"
 
 class JobBase(BaseModel):
     title: str = Field(..., min_length=2, max_length=100)
     company: str = Field(..., min_length=2, max_length=100)
     location: str
     employment_type: EmploymentType
+    department: Optional[str] = None
+    experience_level: Optional[str] = None
     description: str
     requirements: List[str] = []
+    skills: List[str] = []
     salary_range: Optional[str] = None
     status: JobStatus = JobStatus.published
+    assigned_hiring_manager_id: Optional[str] = None
 
 class JobCreate(JobBase):
     pass
@@ -32,10 +38,14 @@ class JobUpdate(BaseModel):
     company: Optional[str] = None
     location: Optional[str] = None
     employment_type: Optional[EmploymentType] = None
+    department: Optional[str] = None
+    experience_level: Optional[str] = None
     description: Optional[str] = None
     requirements: Optional[List[str]] = None
+    skills: Optional[List[str]] = None
     salary_range: Optional[str] = None
     status: Optional[JobStatus] = None
+    assigned_hiring_manager_id: Optional[str] = None
 
 class JobResponse(JobBase):
     id: str

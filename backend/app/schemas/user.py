@@ -38,3 +38,4 @@ class Token(BaseModel):
 
 class TokenPayload(BaseModel):
     sub: Optional[str] = None
+    role: Optional[str] = None

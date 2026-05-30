@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 
 import { AuthProvider } from "@/providers/AuthProvider";
 import { QueryProvider } from "@/providers/QueryProvider";
+import { Toaster } from "react-hot-toast";
 
 export default function RootLayout({
   children,
@@ -29,6 +30,7 @@ export default function RootLayout({
         <QueryProvider>
           <AuthProvider>
             {children}
+            <Toaster position="top-right" />
           </AuthProvider>
         </QueryProvider>
       </body>
