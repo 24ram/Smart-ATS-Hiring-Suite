@@ -36,6 +36,7 @@ export default function AdminDashboardPage() {
 
   const statCards = [
     { name: 'Total Recruiters', value: stats?.total_recruiters || 0, icon: UserPlus, color: 'text-purple-600', bg: 'bg-purple-100 dark:bg-purple-900/30' },
+    { name: 'Total Hiring Mgrs', value: stats?.total_hiring_managers || 0, icon: UserPlus, color: 'text-teal-600', bg: 'bg-teal-100 dark:bg-teal-900/30' },
     { name: 'Total Candidates', value: stats?.total_candidates || 0, icon: Users, color: 'text-blue-600', bg: 'bg-blue-100 dark:bg-blue-900/30' },
     { name: 'Total Jobs', value: stats?.total_jobs || 0, icon: Briefcase, color: 'text-green-600', bg: 'bg-green-100 dark:bg-green-900/30' },
     { name: 'Total Applications', value: stats?.total_applications || 0, icon: Inbox, color: 'text-yellow-600', bg: 'bg-yellow-100 dark:bg-yellow-900/30' },

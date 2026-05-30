@@ -6,31 +6,31 @@ import { useAuth } from '@/providers/AuthProvider';
 import { UserPlus, Mail, Calendar, Shield, CheckCircle, XCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-export default function AdminRecruitersPage() {
-  const [recruiters, setRecruiters] = useState<any[]>([]);
+export default function AdminHiringManagersPage() {
+  const [managers, setManagers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchRecruiters = async () => {
+    const fetchManagers = async () => {
       try {
-        const data = await adminService.getUsers('recruiter');
-        setRecruiters(data);
+        const data = await adminService.getUsers('hiring_manager');
+        setManagers(data);
       } catch (err) {
-        console.error('Failed to fetch recruiters', err);
-        toast.error('Failed to load recruiters list');
+        console.error('Failed to fetch hiring managers', err);
+        toast.error('Failed to load hiring managers list');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchRecruiters();
+    fetchManagers();
   }, []);
 
   const handleUpdateStatus = async (id: string, status: 'approved' | 'rejected') => {
     try {
       await adminService.updateUserStatus(id, status);
       toast.success(`User ${status}`);
-      setRecruiters(recruiters.map(r => r.id === id ? { ...r, status } : r));
+      setManagers(managers.map(r => r.id === id ? { ...r, status } : r));
     } catch (err) {
       toast.error('Failed to update user status');
     }
@@ -48,9 +48,9 @@ export default function AdminRecruitersPage() {
     <div>
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Recruiters</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Hiring Managers</h1>
           <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
-            Manage recruiters and approve new accounts.
+            Manage hiring managers and approve new accounts.
           </p>
         </div>
       </div>
@@ -80,7 +80,7 @@ export default function AdminRecruitersPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
-                  {recruiters.map((person) => (
+                  {managers.map((person) => (
                     <tr key={person.id}>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                         <div className="flex items-center">

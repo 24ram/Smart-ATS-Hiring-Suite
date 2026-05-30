@@ -4,14 +4,16 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/providers/AuthProvider';
-import { LayoutDashboard, Users, UserPlus, Briefcase, Inbox, Menu, X, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, UserPlus, Briefcase, Inbox, Menu, X, LogOut, BarChart } from 'lucide-react';
 
 const navigation = [
   { name: 'Admin Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
   { name: 'Recruiters', href: '/admin/recruiters', icon: UserPlus },
+  { name: 'Hiring Managers', href: '/admin/hiring-managers', icon: Users },
   { name: 'Candidates', href: '/admin/candidates', icon: Users },
   { name: 'Jobs', href: '/admin/jobs', icon: Briefcase },
   { name: 'Applications', href: '/admin/applications', icon: Inbox },
+  { name: 'Analytics', href: '/admin/analytics', icon: BarChart },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

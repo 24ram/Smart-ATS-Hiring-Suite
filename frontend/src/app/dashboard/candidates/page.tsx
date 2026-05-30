@@ -5,9 +5,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { candidateService, Candidate } from "@/services/candidate.service";
 import { jobService } from "@/services/job.service";
+import { useAuth } from "@/providers/AuthProvider";
 import { UploadCloud, Trash2, Search, Cpu, FileText, CheckCircle2, AlertCircle } from "lucide-react";
 
 export default function CandidatesPage() {
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -55,13 +57,15 @@ export default function CandidatesPage() {
           </p>
         </div>
 
-        <button
-          onClick={() => setIsUploadModalOpen(true)}
-          className="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-white flex items-center gap-2 transition"
-        >
-          <UploadCloud size={18} />
-          Upload Resume
-        </button>
+        {user?.role === "recruiter" && (
+          <button
+            onClick={() => setIsUploadModalOpen(true)}
+            className="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-white flex items-center gap-2 transition"
+          >
+            <UploadCloud size={18} />
+            Upload Resume
+          </button>
+        )}
       </div>
 
       <div className="relative mb-6">
@@ -82,7 +86,7 @@ export default function CandidatesPage() {
               <th className="text-left p-4 text-gray-300">Skills</th>
               <th className="text-left p-4 text-gray-300">AI Score</th>
               <th className="text-left p-4 text-gray-300">Date</th>
-              <th className="text-right p-4 text-gray-300">Actions</th>
+              {user?.role === "recruiter" && <th className="text-right p-4 text-gray-300">Actions</th>}
             </tr>
           </thead>
 
@@ -154,28 +158,30 @@ export default function CandidatesPage() {
                     {new Date(candidate.created_at).toLocaleDateString()}
                   </td>
 
-                  <td className="p-4 text-right">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedCandidate(candidate);
-                        setIsMatchModalOpen(true);
-                      }}
-                      className="text-blue-400 hover:text-blue-300 mr-4"
-                    >
-                      Match
-                    </button>
+                  {user?.role === "recruiter" && (
+                    <td className="p-4 text-right">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedCandidate(candidate);
+                          setIsMatchModalOpen(true);
+                        }}
+                        className="text-blue-400 hover:text-blue-300 mr-4"
+                      >
+                        Match
+                      </button>
 
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDelete(candidate.id);
-                      }}
-                      className="text-red-400 hover:text-red-300"
-                    >
-                      <Trash2 className="w-4 h-4 inline" />
-                    </button>
-                  </td>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(candidate.id);
+                        }}
+                        className="text-red-400 hover:text-red-300"
+                      >
+                        <Trash2 className="w-4 h-4 inline" />
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))
             )}
